@@ -38,6 +38,10 @@ Requires Python 3.9+, Git (recommended), VS Code with the official Codex extensi
    Put this in the Codex config file your extension actually loads (often `~/.codex/config.toml`); do not blindly overwrite an existing `[features]` table. Check current [Codex documentation](https://developers.openai.com/codex/) for version-specific configuration. Some releases expose multi-agent via an experimental feature toggle.
 5. Start a **new Codex session** and paste `examples/verify-delegation.md` test prompt.
 
+## Installation & Getting Started
+
+New to CODEX SWARM? Follow the [step-by-step installation guide](docs/INSTALLATION.md) to install, configure, and verify multi-agent delegation in VS Code.
+
 ### What gets installed?
 
 - `.codex/swarm/ORCHESTRATOR.md`: adaptive delegation policy
