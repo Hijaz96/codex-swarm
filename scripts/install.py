@@ -16,6 +16,7 @@ These policies guide native Codex subagent use when supported; never simulate de
 {END}
 """
 FILES = ['ORCHESTRATOR.md', 'AGENT_CONTRACT.md', 'PROFILE_PROMOTION.md']
+EXTRAS = ['scripts/swarm_knowledge.py', 'skills/swarm-knowledge-engine/SKILL.md']
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -26,6 +27,15 @@ def main():
     target = args.target.expanduser().resolve()
     if not target.is_dir():
         parser.error('Target must be an existing directory')
+    # Preflight: do not make partial changes when AGENTS.md cannot be safely edited.
+    agents = target / 'AGENTS.md'
+    old = agents.read_text(encoding='utf-8') if agents.exists() else ''
+    if (START in old) != (END in old):
+        print('ERROR: incomplete CODEX SWARM markers in AGENTS.md', file=sys.stderr)
+        return 2
+    if START not in old and agents.exists() and (target / 'AGENTS.md.bak').exists():
+        print('ERROR: AGENTS.md.bak exists; resolve before installing', file=sys.stderr)
+        return 2
     for name in FILES:
         src = root / '.codex' / 'swarm' / name
         dst = target / '.codex' / 'swarm' / name
@@ -39,9 +49,17 @@ def main():
         if not args.dry_run:
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst)
-    agents = target / 'AGENTS.md'
-    old = agents.read_text(encoding='utf-8') if agents.exists() else ''
-    if START in old or END in old:
+    for name in EXTRAS:
+        src = root / name
+        dst = target / name
+        if dst.exists():
+            print('UNCHANGED' if dst.read_bytes() == src.read_bytes() else 'SKIPPED (existing file differs; review manually)', dst)
+            continue
+        print('CREATE', dst)
+        if not args.dry_run:
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(src, dst)
+    if START in old and END in old:
         print('UNCHANGED (CODEX SWARM marker exists)', agents)
     else:
         print('APPEND', agents)
@@ -54,7 +72,7 @@ def main():
                 shutil.copy2(agents, backup)
                 print('BACKUP', backup)
             agents.write_text(old.rstrip() + '\n' + BLOCK, encoding='utf-8')
-    print('Done. Review files, enable native delegation per your installed Codex version, and start a new session.')
+    print('Done. Knowledge recall is opt-in and best-effort. Review policies and start a new Codex session.')
     return 0
 
 if __name__ == '__main__':
