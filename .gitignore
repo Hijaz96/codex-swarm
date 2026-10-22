@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 .vscode/
+# Runtime data only; source code in .codex/swarm is intentionally tracked here.
+.codex/swarm/data/
+.swarm/
