@@ -11,12 +11,13 @@ BLOCK = f"""
 {START}
 ## CODEX SWARM adaptive delegation
 For substantial engineering tasks, read and follow `.codex/swarm/ORCHESTRATOR.md`,
-`.codex/swarm/AGENT_CONTRACT.md`, and `.codex/swarm/PROFILE_PROMOTION.md`.
+`.codex/swarm/AGENT_CONTRACT.md`, `.codex/swarm/PROFILE_PROMOTION.md`,
+and `.codex/swarm/PROJECT_INTELLIGENCE.md`.
 These policies guide native Codex subagent use when supported; never simulate delegation.
 {END}
 """
-FILES = ['ORCHESTRATOR.md', 'AGENT_CONTRACT.md', 'PROFILE_PROMOTION.md']
-EXTRAS = ['scripts/swarm_knowledge.py', 'skills/swarm-knowledge-engine/SKILL.md']
+FILES = ['ORCHESTRATOR.md', 'AGENT_CONTRACT.md', 'PROFILE_PROMOTION.md', 'PROJECT_INTELLIGENCE.md']
+EXTRAS = ['scripts/swarm_knowledge.py', 'skills/swarm-knowledge-engine/SKILL.md', 'scripts/swarm_project.py', 'skills/swarm-project-intelligence/SKILL.md']
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -27,7 +28,6 @@ def main():
     target = args.target.expanduser().resolve()
     if not target.is_dir():
         parser.error('Target must be an existing directory')
-    # Preflight: do not make partial changes when AGENTS.md cannot be safely edited.
     agents = target / 'AGENTS.md'
     old = agents.read_text(encoding='utf-8') if agents.exists() else ''
     if (START in old) != (END in old):
@@ -72,7 +72,7 @@ def main():
                 shutil.copy2(agents, backup)
                 print('BACKUP', backup)
             agents.write_text(old.rstrip() + '\n' + BLOCK, encoding='utf-8')
-    print('Done. Knowledge recall is opt-in and best-effort. Review policies and start a new Codex session.')
+    print('Done. Project discovery and knowledge recall are best-effort. Review policies and start a new Codex session.')
     return 0
 
 if __name__ == '__main__':
